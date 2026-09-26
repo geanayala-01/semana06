@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orbit - <%= post ? 'Editar Post' : 'Nuevo Post' %></title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body { background: #f3f1fb; }
+    .form-card { max-width: 600px; margin: 40px auto; border-radius: 10px; padding: 10px 20px 20px; }
+    .form-header { text-align: center; margin-bottom: 10px; }
+    .form-header i { font-size: 40px; color: #6a3de8; }
+  </style>
+</head>
+<body>
+
+  <nav class="purple darken-3">
+    <div class="nav-wrapper container">
+      <a href="/" class="brand-logo"><i class="material-icons left">hub</i>Orbit</a>
+    </div>
+  </nav>
+
+  <div class="card form-card">
+    <div class="form-header">
+      <i class="material-icons"><%= post ? 'edit_note' : 'add_circle_outline' %></i>
+      <h5><%= post ? 'Editar Post' : 'Crear Nuevo Post' %></h5>
+    </div>
+
+    <form action="<%= post ? '/posts/' + post._id : '/posts' %>" method="POST" class="row">
+      <div class="input-field col s12">
+        <i class="material-icons prefix purple-text text-darken-2">title</i>
+        <input id="title" name="title" type="text" minlength="5" maxlength="30" value="<%= post ? post.title : '' %>" required>
+        <label for="title" class="<%= post ? 'active' : '' %>">Título (5-30 caracteres)</label>
+      </div>
+
+      <div class="input-field col s12">
+        <i class="material-icons prefix purple-text text-darken-2">notes</i>
+        <textarea id="content" name="content" class="materialize-textarea" minlength="10" required><%= post ? post.content : '' %></textarea>
+        <label for="content" class="<%= post ? 'active' : '' %>">Contenido (mínimo 10 caracteres)</label>
+      </div>
+
+      <div class="input-field col s12">
+        <i class="material-icons prefix purple-text text-darken-2">tag</i>
+        <input id="hashtags" name="hashtags" type="text" value="<%= post && post.hashtags ? post.hashtags.join(', ') : '' %>">
+        <label for="hashtags" class="<%= post ? 'active' : '' %>">Hashtags (separados por coma)</label>
+      </div>
+
+      <div class="input-field col s12">
+        <i class="material-icons prefix purple-text text-darken-2">image</i>
+        <input id="imageUrl" name="imageUrl" type="text" value="<%= post ? (post.imageUrl || '') : '' %>">
+        <label for="imageUrl" class="<%= post ? 'active' : '' %>">URL de imagen (opcional)</label>
+      </div>
+
+      <% if (!post) { %>
+        <div class="input-field col s12">
+          <i class="material-icons prefix purple-text text-darken-2">person</i>
+          <select name="userId" id="userId" required>
+            <option value="" disabled selected>Selecciona un autor</option>
+            <% users.forEach(function(user) { %>
+              <option value="<%= user._id %>"><%= user.name %> <%= user.lastName %></option>
+            <% }) %>
+          </select>
+          <label>Autor</label>
+        </div>
+      <% } %>
+
+      <div class="col s12 center-align" style="margin-top: 20px;">
+        <button type="submit" class="btn waves-effect waves-light purple darken-3">
+          <%= post ? 'Actualizar' : 'Publicar' %> <i class="material-icons right">send</i>
+        </button>
+        <a href="/posts/" class="btn-flat waves-effect">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      M.updateTextFields();
+      var selects = document.querySelectorAll('select');
+      if (window.M) M.FormSelect.init(selects);
+    });
+  </script>
+</body>
+</html>
